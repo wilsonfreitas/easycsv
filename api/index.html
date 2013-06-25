@@ -1,0 +1,351 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>easycsv</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th bgcolor="#70b0f0" class="navbar-select"
+          >&nbsp;&nbsp;&nbsp;Home&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        Module&nbsp;easycsv
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== MODULE DESCRIPTION ==================== -->
+<h1 class="epydoc">Module easycsv</h1><p class="nomargin-top"></p>
+<p>easycsv.py</p>
+  <p>The easycsv module executes csv statements (a kind of csv DSL - domain
+  specific language) to insert/update/delete data into a database.</p>
+  <p>Easycsv was developed to be used with the Storm ORM framework, but it 
+  could be easily adapted for others ORM frameworks (SQLAlchemy, SQLObject,
+  ...).</p>
+<pre class="py-doctest">
+<span class="py-prompt">&gt;&gt;&gt; </span><span class="py-keyword">from</span> storm.locals <span class="py-keyword">import</span> *
+<span class="py-prompt">&gt;&gt;&gt;</span>
+<span class="py-prompt">&gt;&gt;&gt; </span><span class="py-keyword">class</span> <span class="py-defname">Category</span>(object):
+<span class="py-more">... </span>    __storm_table__ = <span class="py-string">'category'</span>
+<span class="py-more">... </span>    name = Unicode(primary=True)
+<span class="py-more">... </span>    parent_name = Unicode()
+<span class="py-more">... </span>    parent = Reference(parent_name, name)
+<span class="py-more">... </span>
+<span class="py-prompt">&gt;&gt;&gt;</span>
+<span class="py-prompt">&gt;&gt;&gt; </span>database = create_database(<span class="py-string">'sqlite:'</span>)
+<span class="py-prompt">&gt;&gt;&gt; </span>store = Store(database)
+<span class="py-prompt">&gt;&gt;&gt; </span>store.execute(<span class="py-string">'CREATE TABLE category (name TEXT PRIMARY KEY, parent_name TEXT)'</span>)
+<span class="py-output">&lt;storm.databases.sqlite.SQLiteResult object at 0xa8a790&gt;</span>
+<span class="py-output"></span><span class="py-prompt">&gt;&gt;&gt; </span>
+<span class="py-prompt">&gt;&gt;&gt; </span><span class="py-keyword">from</span> easycsv <span class="py-keyword">import</span> StormORM
+<span class="py-prompt">&gt;&gt;&gt; </span>
+<span class="py-prompt">&gt;&gt;&gt; </span>statements = <span class="py-string">'''... Category, Name, Parent</span>
+<span class="py-more">... </span><span class="py-string">+, Expenses,</span>
+<span class="py-more">... </span><span class="py-string">+, Internet, Expenses</span>
+<span class="py-more">... </span><span class="py-string">'''</span>
+<span class="py-prompt">&gt;&gt;&gt; </span>
+<span class="py-prompt">&gt;&gt;&gt; </span>orm = StormORM(store=store)
+<span class="py-prompt">&gt;&gt;&gt; </span>orm.execute(statements, modName=<span class="py-string">'__main__'</span>)
+<span class="py-output">(2, 0, 0, 2)</span></pre>
+  <p>This session creates the table Category using the storm framework and 
+  inserts two rows into the database. The tuple returned from orm.execute 
+  says that two statements were submitted and two rows were inserted.</p>
+  <p>The variable defines one csv statement block. A csv statement block 
+  has a header that starts with the name of the class followed by some of 
+  its attributes. The lines starting with '+' represent the csv statements,
+  in particular, csv insert statements. There are three types of csv 
+  statements:</p>
+  <ul>
+    <li>
+      '+' insert
+    </li>
+    <li>
+      '-' delete
+    </li>
+    <li>
+      '~' update
+    </li>
+  </ul>
+  <p>Lines starting with '#', with the first column empty and empty lines 
+  are ignored.</p>
+  <p>Copyright (c) 2008. All rights reserved.</p>
+
+<!-- ==================== CLASSES ==================== -->
+<a name="section-Classes"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td align="left" colspan="2" class="table-header">
+    <span class="table-header">Classes</span></td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="easycsv.AttributeParser-class.html" class="summary-name">AttributeParser</a><br />
+      Generic parser applied to column fields of a statements block.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="easycsv.StormAttributeParser-class.html" class="summary-name">StormAttributeParser</a><br />
+      Implementation of parser for storm ORM.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="easycsv.CSV-class.html" class="summary-name">CSV</a><br />
+      CSV class that handles the csv files content is any iterable where 
+        the content of each row is data delimited text.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="easycsv.CSVType-class.html" class="summary-name">CSVType</a><br />
+      The CSVType declared at the header of a csv statement block.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="easycsv.CSVStatement-class.html" class="summary-name">CSVStatement</a><br />
+      CSVStatement represents the csv statement to be executed by a ORM.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="easycsv.ORM-class.html" class="summary-name">ORM</a><br />
+      The ORM engine super class.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="easycsv.StormORM-class.html" class="summary-name">StormORM</a><br />
+      Storm implementation of ORM super class.
+    </td>
+  </tr>
+</table>
+<!-- ==================== FUNCTIONS ==================== -->
+<a name="section-Functions"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td align="left" colspan="2" class="table-header">
+    <span class="table-header">Functions</span></td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="easycsv-module.html#simple" class="summary-sig-name">simple</a>(<span class="summary-sig-arg">attrName</span>)</span><br />
+      Convert human readable header names to property names in lower case 
+      and replacing spaces to underscore.</td>
+          <td align="right" valign="top">
+            
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="easycsv-module.html#camelCase" class="summary-sig-name">camelCase</a>(<span class="summary-sig-arg">attrName</span>)</span><br />
+      Convert human readable header names to camel case property names.</td>
+          <td align="right" valign="top">
+            
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+</table>
+<!-- ==================== VARIABLES ==================== -->
+<a name="section-Variables"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td align="left" colspan="2" class="table-header">
+    <span class="table-header">Variables</span></td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="INSERT"></a><span class="summary-name">INSERT</span> = <code title="'+'"><code class="variable-quote">'</code><code class="variable-string">+</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="DELETE"></a><span class="summary-name">DELETE</span> = <code title="'-'"><code class="variable-quote">'</code><code class="variable-string">-</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="UPDATE"></a><span class="summary-name">UPDATE</span> = <code title="'~'"><code class="variable-quote">'</code><code class="variable-string">~</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+</table>
+<!-- ==================== FUNCTION DETAILS ==================== -->
+<a name="section-FunctionDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td align="left" colspan="2" class="table-header">
+    <span class="table-header">Function Details</span></td>
+</tr>
+</table>
+<a name="simple"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">simple</span>(<span class="sig-arg">attrName</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    >&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Convert human readable header names to property names in lower case 
+  and replacing spaces to underscore. Examples:</p>
+<pre class="py-doctest">
+<span class="py-prompt">&gt;&gt;&gt; </span>simple(<span class="py-string">&quot;Category&quot;</span>)
+<span class="py-output">&quot;category&quot;</span>
+<span class="py-output"></span><span class="py-prompt">&gt;&gt;&gt; </span>simple(<span class="py-string">&quot;Bank Account&quot;</span>)
+<span class="py-output">&quot;bank_account&quot;</span></pre>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="camelCase"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">camelCase</span>(<span class="sig-arg">attrName</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    >&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Convert human readable header names to camel case property names. 
+  Examples:</p>
+<pre class="py-doctest">
+<span class="py-prompt">&gt;&gt;&gt; </span>camelCase(<span class="py-string">&quot;Category&quot;</span>)
+<span class="py-output">'category'</span>
+<span class="py-output"></span><span class="py-prompt">&gt;&gt;&gt; </span>camelCase(<span class="py-string">&quot;Bank Account&quot;</span>)
+<span class="py-output">'bankAccount'</span></pre>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th bgcolor="#70b0f0" class="navbar-select"
+          >&nbsp;&nbsp;&nbsp;Home&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Sun Dec 21 13:20:36 2008
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>
